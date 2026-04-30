@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#2563eb" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Orario Docente</title>
+</head>
+<body>
+  <main id="app">
+    <section id="hero" aria-label="Riepilogo orario">
+      <div class="heroTop">
+        <div>
+          <div class="eyebrow">App orario</div>
+          <h1>Orario Docente</h1>
+          <div id="teacherDisplay">Docente non impostato</div>
+          <div id="configDisplay">Solo mattina</div>
+        </div>
+        <div class="statusPill" id="dayStatus">Oggi</div>
+      </div>
+
+      <div class="nowPanel" role="status" aria-live="polite">
+        <div>
+          <div class="label">Adesso</div>
+          <div id="nowTime">--:--</div>
+        </div>
+        <div class="lessonBox">
+          <div class="label">Ora corrente</div>
+          <div id="nowLesson">Caricamento orario…</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="controls" aria-label="Azioni principali">
+      <button id="editBtn" class="primary">Modifica</button>
+      <button id="settingsBtn">Impostazioni</button>
+      <button id="exportBtn">Esporta JSON</button>
+      <label class="fileButton" for="scheduleFile">Importa JSON</label>
+      <input id="scheduleFile" type="file" accept=".json,application/json" />
+      <button id="resetBtn" class="danger">Reset</button>
+      <label class="switch">
+        <input type="checkbox" id="alertsToggle">
+        <span>Alert 5 min prima</span>
+      </label>
+    </section>
+
+    <section id="onboardingHint" class="notice">
+      <strong>Primo utilizzo:</strong> imposta il nome docente e scegli se visualizzare solo la mattina o anche le ore pomeridiane. L’orario resta salvato su questo dispositivo.
+    </section>
+
+    <section class="viewTools" aria-label="Filtro vista">
+      <button id="showAllDays" class="chip active">Tutti i giorni</button>
+      <button id="showToday" class="chip">Solo oggi</button>
+    </section>
+
+    <section id="timetable" aria-hidden="false"></section>
+
+    <div id="setupModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
+      <div class="modalInner small">
+        <div class="eyebrow">Configurazione iniziale</div>
+        <h2 id="setupTitle">Prepara la tua app orario</h2>
+        <p>Queste impostazioni restano salvate solo sul tuo dispositivo.</p>
+
+        <label class="fieldLabel" for="setupTeacher">Nome docente</label>
+        <input id="setupTeacher" class="textInput" placeholder="Es. Iennaco" />
+
+        <fieldset class="choiceBox">
+          <legend>La scuola prevede ore pomeridiane?</legend>
+          <label><input type="radio" name="setupMode" value="morning" checked> No, solo mattina fino alla 7ª ora</label>
+          <label><input type="radio" name="setupMode" value="full"> Sì, anche pomeriggio</label>
+        </fieldset>
+
+        <button id="saveSetup" class="primary fullWidth">Inizia</button>
+      </div>
+    </div>
+
+    <div id="editor" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
+      <div class="modalInner">
+        <header>
+          <div>
+            <div class="eyebrow">Orario</div>
+            <h2 id="editorTitle">Editor orario</h2>
+            <p>Formato consigliato: <strong>Classe - Materia (Aula)</strong></p>
+          </div>
+          <button id="closeEditor" class="icon" aria-label="Chiudi editor">✕</button>
+        </header>
+        <div id="editorGrid"></div>
+        <footer>
+          <button id="saveSchedule" class="primary">Salva</button>
+          <button id="cancelEdit">Annulla</button>
+        </footer>
+      </div>
+    </div>
+
+    <div id="settingsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="modalInner small">
+        <header>
+          <div>
+            <div class="eyebrow">Preferenze</div>
+            <h2 id="settingsTitle">Impostazioni</h2>
+          </div>
+          <button id="closeSettings" class="icon" aria-label="Chiudi impostazioni">✕</button>
+        </header>
+
+        <label class="fieldLabel" for="teacherName">Nome docente</label>
+        <input id="teacherName" class="textInput" placeholder="Es. Iennaco" />
+
+        <fieldset class="choiceBox">
+          <legend>Fascia oraria</legend>
+          <label><input type="radio" name="settingsMode" value="morning"> Solo mattina fino alla 7ª ora</label>
+          <label><input type="radio" name="settingsMode" value="full"> Anche pomeriggio</label>
+        </fieldset>
+
+        <footer>
+          <button id="saveSettings" class="primary">Salva impostazioni</button>
+          <button id="cancelSettings">Annulla</button>
+        </footer>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
