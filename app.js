@@ -184,6 +184,7 @@ async function unlockAdvancedMode(){
 }
 
 async function verifyAdvancedCode(value){
+	
   const normalized = String(value || '').trim().toUpperCase();
   const encoded = new TextEncoder().encode(normalized);
   const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
