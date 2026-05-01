@@ -38,7 +38,8 @@ const onboardingHint = document.getElementById('onboardingHint');
 let nextTimer = null;
 let todayOnly = false;
 
-const ADVANCED_CODE_HASH = '78ebc62c48849784f70a077d3f7a4da5021eae950c0e7b609276d3e8208eeb4f'
+const ADVANCED_CODE_HASH = '78ebc62c48849784f70a077d3f7a4da5021eae950c0e7b609276d3e8208eeb4f';
+
 let brandTapCount = 0;
 let brandTapTimer = null;
 let brandPressTimer = null;
