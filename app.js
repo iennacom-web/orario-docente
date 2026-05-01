@@ -38,7 +38,7 @@ const onboardingHint = document.getElementById('onboardingHint');
 let nextTimer = null;
 let todayOnly = false;
 
-const ADVANCED_CODE_HASH = '6d6cc3516aa4b825fe900dbfac806233e85ecf208fde69d33f7a8e88dfdd0caa'
+const ADVANCED_CODE_HASH = '78ebc62c48849784f70a077d3f7a4da5021eae950c0e7b609276d3e8208eeb4f'
 let brandTapCount = 0;
 let brandTapTimer = null;
 let brandPressTimer = null;
@@ -184,7 +184,7 @@ async function unlockAdvancedMode(){
 }
 
 async function verifyAdvancedCode(value){
-  const normalized = String(value || '').trim().toLowerCase();
+  const normalized = String(value || '').trim().toUpperCase();
   const encoded = new TextEncoder().encode(normalized);
   const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
