@@ -38,6 +38,20 @@ const onboardingHint = document.getElementById('onboardingHint');
 let nextTimer = null;
 let todayOnly = false;
 
+const ADVANCED_CODE_HASH = '6d6cc3516aa4b825fe900dbfac806233e85ecf208fde69d33f7a8e88dfdd0caa'
+let brandTapCount = 0;
+let brandTapTimer = null;
+let brandPressTimer = null;
+
+const brandTrigger = document.getElementById('brandTrigger');
+const advancedModal = document.getElementById('advancedModal');
+const closeAdvanced = document.getElementById('closeAdvanced');
+const advancedLocked = document.getElementById('advancedLocked');
+const advancedTools = document.getElementById('advancedTools');
+const advancedCode = document.getElementById('advancedCode');
+const unlockAdvanced = document.getElementById('unlockAdvanced');
+const advancedError = document.getElementById('advancedError');
+
 init();
 
 function init(){
@@ -49,6 +63,14 @@ function init(){
   setInterval(tick, 30_000);
 
   saveSetup.onclick = saveInitialSetup;
+  document.querySelector('.fileButton')?.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      fileInput.click();
+    }
+  });
+
+  setupAdvancedMode();
   settingsBtn.onclick = openSettings;
   closeSettings.onclick = closeSettingsFunc;
   cancelSettings.onclick = closeSettingsFunc;
@@ -73,14 +95,18 @@ function init(){
   showAllDaysBtn.onclick = () => {
     todayOnly = false;
     showAllDaysBtn.classList.add('active');
+    showAllDaysBtn.setAttribute('aria-pressed','true');
     showTodayBtn.classList.remove('active');
+    showTodayBtn.setAttribute('aria-pressed','false');
     renderTimetable();
   };
 
   showTodayBtn.onclick = () => {
     todayOnly = true;
     showTodayBtn.classList.add('active');
+    showTodayBtn.setAttribute('aria-pressed','true');
     showAllDaysBtn.classList.remove('active');
+    showAllDaysBtn.setAttribute('aria-pressed','false');
     renderTimetable();
   };
 
@@ -100,6 +126,70 @@ function init(){
       cancelNextNotification();
     }
   };
+}
+
+
+function setupAdvancedMode(){
+  if (!brandTrigger || !advancedModal) return;
+
+  brandTrigger.addEventListener('click', () => {
+    brandTapCount += 1;
+    clearTimeout(brandTapTimer);
+    brandTapTimer = setTimeout(() => { brandTapCount = 0; }, 1800);
+    if (brandTapCount >= 5) {
+      brandTapCount = 0;
+      openAdvancedModal();
+    }
+  });
+
+  brandTrigger.addEventListener('pointerdown', () => {
+    clearTimeout(brandPressTimer);
+    brandPressTimer = setTimeout(openAdvancedModal, 3500);
+  });
+
+  ['pointerup','pointercancel','pointerleave'].forEach(evt => {
+    brandTrigger.addEventListener(evt, () => clearTimeout(brandPressTimer));
+  });
+
+  closeAdvanced.onclick = closeAdvancedModal;
+  unlockAdvanced.onclick = unlockAdvancedMode;
+  advancedCode.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') unlockAdvancedMode();
+  });
+}
+
+function openAdvancedModal(){
+  advancedModal.classList.remove('hidden');
+  advancedLocked.classList.remove('hidden');
+  advancedTools.classList.add('hidden');
+  advancedCode.value = '';
+  advancedError.classList.add('hidden');
+  setTimeout(() => advancedCode.focus(), 50);
+}
+
+function closeAdvancedModal(){
+  advancedModal.classList.add('hidden');
+}
+
+async function unlockAdvancedMode(){
+  const ok = await verifyAdvancedCode(advancedCode.value);
+  if (!ok) {
+    advancedError.classList.remove('hidden');
+    advancedCode.select();
+    return;
+  }
+  advancedError.classList.add('hidden');
+  advancedLocked.classList.add('hidden');
+  advancedTools.classList.remove('hidden');
+}
+
+async function verifyAdvancedCode(value){
+  const normalized = String(value || '').trim().toLowerCase();
+  const encoded = new TextEncoder().encode(normalized);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex === ADVANCED_CODE_HASH;
 }
 
 function saveInitialSetup(){
@@ -156,7 +246,7 @@ async function importSchedule(e){
     if (alertsToggle.checked) scheduleNextNotification();
     alert('Orario importato correttamente.');
   } catch(err){
-    alert('File JSON non valido o non compatibile.');
+    alert('Copia orario non valida o non compatibile.');
   } finally {
     fileInput.value = '';
   }
@@ -212,8 +302,9 @@ function renderTimetable(){
     const isToday = nowSlot.dayName === day;
     if (todayOnly && !isToday) continue;
 
-    const col = document.createElement('div');
+    const col = document.createElement('section');
     col.className = 'dayCol';
+    col.setAttribute('aria-label', `Orario di ${day}`);
     if (isToday) col.classList.add('today');
 
     const title = document.createElement('div');
@@ -227,7 +318,10 @@ function renderTimetable(){
       const slot = document.createElement('div');
       slot.className = rawText ? 'slot' : 'slot free';
       slot.innerHTML = `<span class="slotHour">${h}:00</span><span class="slotText">${escapeHTML(text)}</span>`;
-      if (isNowSlot(day, h)) slot.classList.add('now');
+      if (isNowSlot(day, h)) {
+        slot.classList.add('now');
+        slot.setAttribute('aria-current', 'true');
+      }
       col.appendChild(slot);
     }
     timetableEl.appendChild(col);

@@ -9,6 +9,7 @@
   <title>Orario Docente</title>
 </head>
 <body>
+  <a class="skipLink" href="#timetable">Salta al contenuto principale</a>
   <main id="app">
     <section id="hero" aria-label="Riepilogo orario">
       <div class="heroTop">
@@ -34,25 +35,21 @@
     </section>
 
     <section id="controls" aria-label="Azioni principali">
-      <button id="editBtn" class="primary">Modifica</button>
-      <button id="settingsBtn">Impostazioni</button>
-      <button id="exportBtn">Esporta JSON</button>
-      <label class="fileButton" for="scheduleFile">Importa JSON</label>
-      <input id="scheduleFile" type="file" accept=".json,application/json" />
-      <button id="resetBtn" class="danger">Reset</button>
+      <button id="editBtn" class="primary" aria-label="Modifica orario settimanale">Modifica orario</button>
+      <button id="settingsBtn" aria-label="Apri impostazioni docente e fascia oraria">Impostazioni</button>
       <label class="switch">
-        <input type="checkbox" id="alertsToggle">
-        <span>Alert 5 min prima</span>
+        <input type="checkbox" id="alertsToggle" aria-describedby="alertHelp">
+        <span>Alert 5 min prima</span><span id="alertHelp" class="srOnly">Attiva una notifica cinque minuti prima dell’inizio della lezione.</span>
       </label>
     </section>
 
     <section id="onboardingHint" class="notice">
-      <strong>Primo utilizzo:</strong> imposta il nome docente e scegli se visualizzare solo la mattina o anche le ore pomeridiane. L’orario resta salvato su questo dispositivo.
+      <strong>Primo utilizzo:</strong> imposta il nome docente, scegli la fascia oraria e compila la griglia con “Modifica orario”. L’orario resta salvato su questo dispositivo.
     </section>
 
     <section class="viewTools" aria-label="Filtro vista">
-      <button id="showAllDays" class="chip active">Tutti i giorni</button>
-      <button id="showToday" class="chip">Solo oggi</button>
+      <button id="showAllDays" class="chip active" aria-pressed="true">Tutti i giorni</button>
+      <button id="showToday" class="chip" aria-pressed="false">Solo oggi</button>
     </section>
 
     <section id="timetable" aria-hidden="false"></section>
@@ -64,7 +61,7 @@
         <p>Queste impostazioni restano salvate solo sul tuo dispositivo.</p>
 
         <label class="fieldLabel" for="setupTeacher">Nome docente</label>
-        <input id="setupTeacher" class="textInput" placeholder="Es. Iennaco" />
+        <input id="setupTeacher" class="textInput" placeholder="Inserisci il tuo nome" autocomplete="name" />
 
         <fieldset class="choiceBox">
           <legend>La scuola prevede ore pomeridiane?</legend>
@@ -105,7 +102,7 @@
         </header>
 
         <label class="fieldLabel" for="teacherName">Nome docente</label>
-        <input id="teacherName" class="textInput" placeholder="Es. Iennaco" />
+        <input id="teacherName" class="textInput" placeholder="Inserisci il tuo nome" autocomplete="name" />
 
         <fieldset class="choiceBox">
           <legend>Fascia oraria</legend>
@@ -119,6 +116,49 @@
         </footer>
       </div>
     </div>
+
+
+    <div id="advancedModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="advancedTitle">
+      <div class="modalInner small">
+        <header>
+          <div>
+            <div class="eyebrow">Area avanzata</div>
+            <h2 id="advancedTitle">Strumenti di backup</h2>
+          </div>
+          <button id="closeAdvanced" class="icon" aria-label="Chiudi area avanzata">✕</button>
+        </header>
+
+        <div id="advancedLocked">
+          <p>Questa area è riservata agli strumenti di manutenzione: backup, ripristino e reset completo.</p>
+          <label class="fieldLabel" for="advancedCode">Codice avanzato</label>
+          <input id="advancedCode" class="textInput" type="password" autocomplete="off" inputmode="text" placeholder="Inserisci codice" />
+          <button id="unlockAdvanced" class="primary fullWidth">Sblocca strumenti</button>
+          <p id="advancedError" class="formError hidden" role="alert">Codice non corretto.</p>
+        </div>
+
+        <div id="advancedTools" class="hidden">
+          <div class="notice compact">
+            Usa questi strumenti solo per fare una copia dell’orario, trasferirlo su un altro dispositivo o ripristinare una copia salvata.
+          </div>
+
+          <div class="advancedActions">
+            <button id="exportBtn" class="primary">Salva copia orario</button>
+            <label class="fileButton" for="scheduleFile" role="button" tabindex="0">Carica copia orario</label>
+            <input id="scheduleFile" type="file" accept=".json,application/json" />
+            <button id="resetBtn" class="danger">Reset completo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <footer class="appFooter" aria-label="Informazioni sul progetto">
+      <button id="brandTrigger" class="brandTrigger" type="button" aria-label="Informazioni IenMas">© 2026 <strong>IenMas</strong> – by Massimiliano Iennaco</button>
+      <span class="footerSep" aria-hidden="true">•</span>
+      <a href="https://github.com/iennacom-web/orario-docente" target="_blank" rel="noopener noreferrer">Progetto su GitHub</a>
+      <span class="footerSep" aria-hidden="true">•</span>
+      <span>Licenza MIT</span>
+    </footer>
   </main>
 
   <script type="module" src="app.js"></script>
